@@ -1,11 +1,11 @@
 'use strict';
 
 module.exports = (err, req, res, next) => {
-  console.error('__SERVER_ERROR__', err);
-  let error = { error: err.message || err };
-  res.statusCode = err.status || 500;
-  res.statusMessage = err.statusMessage || 'Server Error';
+  let error = { error: 'Resource Not Found' };
+  res.statusCode = 500;
+  res.statusMessage = 'Not Found';
   res.setHeader('Content-Type', 'application/json');
-  res.write( JSON.stringify(error) );
+  res.write(JSON.stringify(error));
   res.end();
 };
+
