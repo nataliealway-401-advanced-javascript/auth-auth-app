@@ -1,48 +1,43 @@
 'use strict';
 
-const uuid = require('uuid/v4');
 
-class Model {
+class dataModel {
 
-  /**
-   * Model Constructor
-   * @param schema {object} - mongo schema
-   */
   constructor() {
     this.database = [];
   }
-  /**
-   * JSON Schema
-   * @returns {*}
-   */
-  jsonSchema() {
-    console.log(typeof this.schema.jsonSchema);
-    return typeof this.schema.jsonSchema === 'function'
-      ? this.schema.jsonSchema()
-      : {};
-  }
 
-  get(id) {
-    let response = id ? this.database.filter((record) => record.id === id) : this.database;
-    return Promise.resolve(response);
-  }
 
-  create(record) {
-    record.id = uuid();
-    this.database.push(record);
-    return Promise.resolve(record);
+get(id){
+  if(id){
+    return this.schema.findOne( {id} );
   }
-
-  update(id, record) {
-    this.database = this.database.map((item) => (item.id === id) ? record : item);
-    return Promise.resolve(record);
-  }
-
-  delete(id) {
-    this.database = this.database.filter((record) => record.id !== id);
-    return Promise.resolve();
-  }
-
+  else return this.schema.find({});
 }
 
-module.exports = Model;
+post(record){
+  let newObject = new this.schema(record);
+  return newObject.save();
+}
+
+
+put(id, record){
+  if(id && record){
+    return this.schema.findByIdAndUpdate(id, record, {new: true});
+  }
+  else {
+    return undefined;
+  }
+}
+
+delete(id){
+  if(id){
+    return this.schema.findByIdAndDelete(id);
+  }
+  else {
+    return 'could not find record...';
+  }
+ }
+}
+
+module.exports = dataModel;

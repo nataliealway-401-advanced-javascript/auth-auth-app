@@ -1,11 +1,11 @@
 'use strict';
 
 const schema = require('./userSchema.js');
-const dataModel = require('./dataModel.js');
-const jwt = require('jasonwebtoken');
+const dataModel = require('@trevorthompson/mongo-model');
+const jwt = require('jsonwebtoken');
 const bcrypt = require('bcryptjs');
 
-let SECRET = process.env.SECRET;
+let SECRET = 'secretsSecretsAreNoFun';
 
 //Base for the User class
 class User extends dataModel {
@@ -26,7 +26,7 @@ async authenticate(user, pass) {
     let test = await schema.find({username: user});
     let storedPassword = test[0].password;
 
-    let valud = bcrypt.compare(pass, storedPassword);
+    let valid = bcrypt.compare(pass, storedPassword);
     return valid ? user: Promise.reject();
  }
 }

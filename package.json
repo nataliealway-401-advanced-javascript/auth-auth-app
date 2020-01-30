@@ -17,6 +17,7 @@
   "license": "ISC",
   "dependencies": {
     "@code-fellows/supergoose": "^1.0.1",
+    "@trevorthompson/mongo-model": "^1.0.2",
     "base-64": "^0.1.0",
     "bcrypt": "^3.0.7",
     "bcryptjs": "^2.4.3",
@@ -27,6 +28,7 @@
     "jest": "^24.9.0",
     "jsonwebtoken": "^8.5.1",
     "mongodb-memory-server": "^6.2.4",
+    "mongoose": "^5.8.10",
     "morgan": "^1.9.1",
     "supertest": "^4.0.2",
     "swagger-ui-express": "^4.1.2"
