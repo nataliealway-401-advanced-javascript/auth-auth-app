@@ -4,12 +4,12 @@
 ### Author: Natalie Alway
 
 ### Links and Resources
-* [submission PR]()
-* [travis]()
+* [submission PR](https://github.com/nataliealway-401-advanced-javascript/auth-auth-app/pull/1)
+* [travis](https://www.travis-ci.com/nataliealway-401-advanced-javascript/auth-auth-app)
 
 
 #### Documentation
-* [jsdoc]() 
+* [jsdoc](https://github.com/nataliealway-401-advanced-javascript/auth-auth-app/tree/lab11/docs) 
 
 
 ### Setup
