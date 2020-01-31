@@ -9,26 +9,26 @@ let SECRET = 'secretsSecretsAreNoFun';
 
 //Base for the User class
 class User extends dataModel {
-    constructor() {
-        super(schema);
-    }
+  constructor() {
+    super(schema);
+  }
 
-    //Generate a jwt token for user
+  //Generate a jwt token for user
 
-    generateToken() {
-        let token = jwt.sign({username: this.username}, SECRET)
-        return token;
-    }
+  generateToken() {
+    let token = jwt.sign({username: this.username}, SECRET);
+    return token;
+  }
 
-    //Find header in the database and compares the passwords
+  //Find header in the database and compares the passwords
 
-async authenticate(user, pass) {
+  async authenticate(user, pass) {
     let test = await schema.find({username: user});
     let storedPassword = test[0].password;
 
     let valid = bcrypt.compare(pass, storedPassword);
     return valid ? user: Promise.reject();
- }
+  }
 }
 
 

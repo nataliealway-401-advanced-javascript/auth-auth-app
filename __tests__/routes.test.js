@@ -35,10 +35,10 @@ describe('Route Testing', () => {
 
   it('throws an error with a invalid object', () => {
     return mockRequest.post('/signup')
-    .send({name: 'incorrect', password: 5})
-    .then(data => {
-      expect(data.text).toEqual('Error');
-    });
+      .send({name: 'incorrect', password: 5})
+      .then(data => {
+        expect(data.text).toEqual('Error');
+      });
   });
 
 
