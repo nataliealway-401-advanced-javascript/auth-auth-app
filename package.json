@@ -1,8 +1,31 @@
 {
-  "name": "server",
+  "name": "auth-auth-app",
   "version": "1.0.0",
   "description": "",
   "main": "index.js",
+  "directories": {
+    "doc": "docs"
+  },
+  "dependencies": {
+    "@code-fellows/supergoose": "^1.0.1",
+    "@trevorthompson/mongo-model": "^1.0.2",
+    "base-64": "^0.1.0",
+    "bcryptjs": "^2.4.3",
+    "cor": "0.0.0",
+    "cors": "^2.8.5",
+    "dotenv": "^8.2.0",
+    "eslint": "^6.8.0",
+    "express": "^4.17.1",
+    "jest": "^24.9.0",
+    "jsdoc": "^3.6.3",
+    "jsonwebtoken": "^8.5.1",
+    "mongoose": "^5.8.10",
+    "morgan": "^1.9.1",
+    "super": "^0.2.3",
+    "supertest": "^4.0.2",
+    "test": "^0.6.0"
+  },
+  "devDependencies": {},
   "scripts": {
     "start": "node index.js",
     "lint": "eslint ./*.js",
@@ -10,30 +33,15 @@
     "test-watch": "jest --watchAll --verbose --coverage",
     "jsdoc": "jsdoc -c ./docs/config/jsdoc.config.json"
   },
-  "jest": {
-    "testEnvironment": "node"
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/nataliealway-401-advanced-javascript/auth-auth-app.git"
   },
   "keywords": [],
   "author": "",
   "license": "ISC",
-  "dependencies": {
-    "@code-fellows/supergoose": "^1.0.1",
-    "@trevorthompson/mongo-model": "^1.0.2",
-    "base-64": "^0.1.0",
-    "bcrypt": "^3.0.7",
-    "bcryptjs": "^2.4.3",
-    "cors": "^2.8.5",
-    "debug": "^4.1.1",
-    "dotenv": "^8.2.0",
-    "eslint": "^6.8.0",
-    "express": "^4.17.1",
-    "jest": "^24.9.0",
-    "jsdoc": "^3.6.3",
-    "jsonwebtoken": "^8.5.1",
-    "mongodb-memory-server": "^6.2.4",
-    "mongoose": "^5.8.10",
-    "morgan": "^1.9.1",
-    "supertest": "^4.0.2",
-    "swagger-ui-express": "^4.1.2"
-  }
+  "bugs": {
+    "url": "https://github.com/nataliealway-401-advanced-javascript/auth-auth-app/issues"
+  },
+  "homepage": "https://github.com/nataliealway-401-advanced-javascript/auth-auth-app#readme"
 }
