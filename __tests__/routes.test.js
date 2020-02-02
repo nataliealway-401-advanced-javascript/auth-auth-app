@@ -19,7 +19,7 @@ describe('Route Testing', () => {
       .send(userObj)
       .then(data => {
         let token = jwt.verify(data.text, 'secretsSecretsAreNoFun');
-        tokenID = token;
+        tokenID = token.iat;
         expect(token).toBeDefined();
       });
   });
@@ -30,6 +30,7 @@ describe('Route Testing', () => {
       .then(results => {
         let token = jwt.verify(results.text, 'secretsSecretsAreNoFun');
         expect(token.iat).toEqual(tokenID);
+        
       });
   });
 
