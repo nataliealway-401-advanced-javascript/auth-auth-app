@@ -1,8 +1,7 @@
 'use strict';
 
 const superagent = require('superagent');
-const User = require('../users.js');
-const users = new User();
+const users = require('../../model/userModel.js');
 require('dotenv').config();
 
 /*
@@ -29,8 +28,10 @@ module.exports = async function authorize(req, res, next) {
     console.log('(3) GITHUB USER', remoteUser);
 
     let [user, token] = await getUser(remoteUser);
-    req.user = user;
-    req.token = token;
+    // req.user = user;
+    // req.token = token;
+    console.log('HERE!!!!!!!!!!!', user, token);
+    
     console.log('(4) LOCAL USER', user);
 
     next();
@@ -70,11 +71,12 @@ async function getUser(remoteUser) {
     password: 'oauthpassword',
   };
 
-  console.log(userRecord);
+  //console.log(userRecord);
 
   let user = await users.save(userRecord);
   let token = users.generateToken(user);
 
+  console.log('USER & TOKEN!!!!!!!!', user, token);
   return [user, token];
 
 }
