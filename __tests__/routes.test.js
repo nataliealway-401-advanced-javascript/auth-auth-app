@@ -29,7 +29,7 @@ describe('Route Testing', () => {
       .auth(userObj.username, userObj.password)
       .then(results => {
         let token = jwt.verify(results.text, 'secretsSecretsAreNoFun');
-        expect(token).toEqual(tokenID);
+        expect(token.iat).toEqual(tokenID);
       });
   });
 
