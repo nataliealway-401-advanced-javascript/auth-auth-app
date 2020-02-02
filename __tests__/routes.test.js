@@ -24,7 +24,7 @@ describe('Route Testing', () => {
       });
   });
 
-  xit('/signin authenticates user', () => {
+  it('/signin authenticates user', () => {
     return mockRequest.post('/signin')
       .auth(userObj.username, userObj.password)
       .then(results => {
@@ -37,7 +37,7 @@ describe('Route Testing', () => {
     return mockRequest.post('/signup')
       .send({name: 'incorrect', password: 5})
       .then(data => {
-        expect(data.text).toEqual('Error');
+        expect(data.text).toEqual('Error Creating User');
       });
   });
 
