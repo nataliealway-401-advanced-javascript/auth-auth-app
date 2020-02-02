@@ -19,17 +19,18 @@ describe('Route Testing', () => {
       .send(userObj)
       .then(data => {
         let token = jwt.verify(data.text, 'secretsSecretsAreNoFun');
-        tokenID = token;
+        tokenID = token.iat;
         expect(token).toBeDefined();
       });
   });
 
-  xit('/signin authenticates user', () => {
+  it('/signin authenticates user', () => {
     return mockRequest.post('/signin')
       .auth(userObj.username, userObj.password)
       .then(results => {
         let token = jwt.verify(results.text, 'secretsSecretsAreNoFun');
-        expect(token).toEqual(tokenID);
+        expect(token.iat).toEqual(tokenID);
+        
       });
   });
 
@@ -37,7 +38,7 @@ describe('Route Testing', () => {
     return mockRequest.post('/signup')
       .send({name: 'incorrect', password: 5})
       .then(data => {
-        expect(data.text).toEqual('Error');
+        expect(data.text).toEqual('Error Creating User');
       });
   });
 

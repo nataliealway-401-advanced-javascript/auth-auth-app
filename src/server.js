@@ -4,12 +4,11 @@
 const express = require('express');
 const cors = require('cors');
 const morgan = require('morgan');
-const router = require('./routes/router.js');
 
 // Esoteric Resources
 const errorHandler = require('./middleware/error500');
 const notFound = require('./middleware/error404.js');
-// const router = require('./auth/routes/router.js');
+const router = require('./routes/router.js');
 
 
 // Prepare the express app

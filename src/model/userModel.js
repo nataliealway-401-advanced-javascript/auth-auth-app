@@ -16,6 +16,14 @@ class User extends dataModel {
     super(schema);
   }
 
+  async save(record){
+    let {username, password} = record;
+    password = await bcrypt.hash(password, 5);
+    let hashed = { username: username, password: password };    
+    this.post(hashed);
+    // console.log('HEYYYYYYYYYYY!!!!', record);   
+    return record;
+  }
 
   /**
    * generateToken() -> generates a jsonwebtoken for user
@@ -33,9 +41,9 @@ class User extends dataModel {
    * @param  {} pass
    * @returns authenticated user
    */
-  async authenticate(user, pass) {
-    let test = await schema.find({username: user});
-    let storedPassword = test[0].password;
+  async authenticateBasic(user, pass) {
+    let getUser = await schema.find({username: user});
+    let storedPassword = getUser[0].password;
 
     let valid = bcrypt.compare(pass, storedPassword);
     return valid ? user: Promise.reject();
