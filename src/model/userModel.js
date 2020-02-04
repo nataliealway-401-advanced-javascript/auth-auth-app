@@ -34,6 +34,22 @@ class User extends dataModel {
     let token = jwt.sign({username: this.username}, SECRET);
     return token;
   }
+
+  async authenticateToken(token){
+    try {
+      let parsedTokenObject = jwt.verify(token, SECRET);
+      console.log('parsed token obj', parsedTokenObject);
+      if(schema.find({username: parsedTokenObject.username})){
+        return Promise.resolve(parsedTokenObject);
+      }
+      else {
+        return Promise.reject();
+      }
+    }
+    catch(error) {
+      return Promise.reject();
+    }
+  }
   
   /**
    * authenticate() -> async function that finds header in database and compares the passwords
