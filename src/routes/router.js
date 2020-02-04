@@ -3,6 +3,7 @@
 const express = require('express');
 const router = express.Router();
 const basicAuth = require('../auth/auth-middleware.js');
+const bearerAuth = require('../auth/bearerAuth.js');
 const oauth = require('../auth/oauth/github.js');
 const users = require('../model/userModel.js');
 /**
@@ -20,6 +21,10 @@ router.get('/users', (req, res, next) => {
       };
       res.json(output);
     });
+});
+
+router.get('/user', bearerAuth, (req, res, next) => {
+  res.status(200).json(req.user);
 });
   
 
