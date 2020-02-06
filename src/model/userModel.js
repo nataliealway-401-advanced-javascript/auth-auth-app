@@ -4,6 +4,7 @@ const schema = require('./userSchema.js');
 const dataModel = require('@trevorthompson/mongo-model');
 const jwt = require('jsonwebtoken');
 const bcrypt = require('bcryptjs');
+require('./accessModel.js');
 
 let SECRET = 'secretsSecretsAreNoFun';
 
@@ -20,8 +21,7 @@ class User extends dataModel {
     let {username, password} = record;
     password = await bcrypt.hash(password, 5);
     let hashed = { username: username, password: password };    
-    this.post(hashed);
-    // console.log('HEYYYYYYYYYYY!!!!', record);   
+    this.post(hashed);s  
     return record;
   }
 
