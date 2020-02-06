@@ -45,13 +45,8 @@ router.patch('/delete', bearerAuth, acl('delete'), (req, res, next) => {
   res.send('OK');
 });
   
-router.get(
-  '/everything',
-  bearerAuth,
-  acl('superuser'),
-  (req, res, next) => {
-    res.send('OK');
-  },
-);
+router.get('/everything', bearerAuth, acl('superuser'), (req, res, next) => {
+  res.send('OK');
+});
   
 module.exports = router;
