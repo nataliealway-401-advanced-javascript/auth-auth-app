@@ -1,70 +1,128 @@
 'use strict';
 
-const schema = require('./userSchema.js');
-const dataModel = require('@trevorthompson/mongo-model');
-const jwt = require('jsonwebtoken');
+const mongoose = require('mongoose');
 const bcrypt = require('bcryptjs');
+const jwt = require('jsonwebtoken');
 require('./accessModel.js');
 
-let SECRET = 'secretsSecretsAreNoFun';
+const SECRET = 'sauce';
+const persistTokens = new Set();
 
-/**
- * @class User
- * User class extends dataModel
- */
-class User extends dataModel {
-  constructor() {
-    super(schema);
-  }
+const capabilities = {
+  admin: ['create', 'read', 'update', 'delete', 'superuser'],
+  editor: ['create', 'read', 'update'],
+  user: ['read'],
+};
 
-  async save(record){
-    let {username, password} = record;
-    password = await bcrypt.hash(password, 5);
-    let hashed = { username: username, password: password };    
-    this.post(hashed);s  
-    return record;
-  }
+const userSchema = new mongoose.Schema(
+  {
+    username: { type: String, required: true, unique: true },
+    password: { type: String, required: true },
+    email: { type: String },
+    role: { type: String, default: 'user', enum: ['admin', 'editor', 'user'] },
+  },
+  {
+    toObject: { virtuals: true, getters: true },
+    toJSON: { virtuals: true, getters: true },
+  },
+);
 
-  /**
-   * generateToken() -> generates a jsonwebtoken for user
-   * @param  {} SECRET
-   * @returns token
-   */
-  generateToken() {
-    let token = jwt.sign({username: this.username}, SECRET);
-    return token;
-  }
+userSchema.virtual('userRoles', {
+  ref: 'roles',
+  localField: 'role',
+  foreignField: 'type',
+  justOne: true,
+});
 
-  async authenticateToken(token){
-    try {
-      let parsedTokenObject = jwt.verify(token, SECRET);
-      console.log('parsed token obj', parsedTokenObject);
-      if(schema.find({username: parsedTokenObject.username})){
-        return Promise.resolve(parsedTokenObject);
-      }
-      else {
-        return Promise.reject();
-      }
-    }
-    catch(error) {
-      return Promise.reject();
-    }
-  }
-  
-  /**
-   * authenticate() -> async function that finds header in database and compares the passwords
-   * @param  {} user
-   * @param  {} pass
-   * @returns authenticated user
-   */
-  async authenticateBasic(user, pass) {
-    let getUser = await schema.find({username: user});
-    let storedPassword = getUser[0].password;
 
-    let valid = bcrypt.compare(pass, storedPassword);
-    return valid ? user: Promise.reject();
+userSchema.pre('save', async function(next) {
+  if (this.isModified('password')) {
+    this.password = await bcrypt.hash(this.password, 10);
   }
+  next();
+});
+
+userSchema.pre('save', join);
+userSchema.pre('find', join);
+
+
+function join(next) {
+  try {
+    this.populate('userRoles');
+  } catch (error) {
+    console.error(error);
+  }
+  next();
 }
 
 
-module.exports = new User();
+userSchema.statics.createFromOauth = function(email) {
+  if (!email) {
+    return Promise.reject('Validation Error');
+  }
+
+  return this.findOne({ email })
+    .then(user => {
+      if (!user) {
+        throw new Error('User Not Found');
+      }
+      console.log('Welcome Back', user.username);
+      return user;
+    })
+    .catch(error => {
+      console.log('Creating new user');
+      let username = email;
+      let password = 'none';
+      return this.create({ username, password, email });
+    });
+};
+
+
+userSchema.statics.authenticateBasic = function(auth) {
+  let query = { username: auth.username };
+  return this.findOne(query)
+    .then(user => user && user.comparePassword(auth.password))
+    .catch(error => {
+      throw error;
+    });
+};
+
+
+userSchema.methods.comparePassword = function(password) {
+  return bcrypt
+    .compare(password, this.password)
+    .then(valid => (valid ? this : null));
+};
+
+
+userSchema.statics.authenticateToken = function(token) {
+  try {
+    if (persistTokens.has(token)) {
+      return Promise.reject('Token has been used');
+    }
+
+    let parsedTokenObject = jwt.verify(token, SECRET);
+
+    persistTokens.add(token);
+
+    let query = { _id: parsedTokenObject.id };
+
+    return this.find(query);
+  } catch (error) {
+    return Promise.reject();
+  }
+};
+
+
+userSchema.methods.generateToken = function() {
+  let token = {
+    id: this._id,
+    capabilities: capabilities[this.role],
+    username: this.username,
+    type: 'user',
+  };
+
+  return jwt.sign(token, SECRET, { expiresIn: '15m' });
+};
+
+module.exports = mongoose.model('users', userSchema);
