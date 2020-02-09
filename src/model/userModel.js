@@ -5,7 +5,7 @@ const bcrypt = require('bcryptjs');
 const jwt = require('jsonwebtoken');
 require('./accessModel.js');
 
-const SECRET = 'sauce';
+const SECRET = 'secretSecretsAreNoFun';
 const persistTokens = new Set();
 
 const capabilities = {
@@ -26,7 +26,10 @@ const userSchema = new mongoose.Schema(
     toJSON: { virtuals: true, getters: true },
   },
 );
-
+/**
+ * @param  {} 'userRoles'
+ * @object 
+ */
 userSchema.virtual('userRoles', {
   ref: 'roles',
   localField: 'role',
@@ -34,7 +37,10 @@ userSchema.virtual('userRoles', {
   justOne: true,
 });
 
-
+/**
+ * Waits for hashed password then saves the user 
+ * @param  {} 'save'
+ */
 userSchema.pre('save', async function(next) {
   if (this.isModified('password')) {
     this.password = await bcrypt.hash(this.password, 10);
@@ -45,7 +51,10 @@ userSchema.pre('save', async function(next) {
 userSchema.pre('save', join);
 userSchema.pre('find', join);
 
-
+/**
+ * Joins user with user role
+ * @param  {} next
+ */
 function join(next) {
   try {
     this.populate('userRoles');
@@ -55,7 +64,11 @@ function join(next) {
   next();
 }
 
-
+/**
+ * Finds users email from oath and logs in or creates new user
+ * @function createFromOauth
+ * @param {} email
+ */
 userSchema.statics.createFromOauth = function(email) {
   if (!email) {
     return Promise.reject('Validation Error');
@@ -77,7 +90,11 @@ userSchema.statics.createFromOauth = function(email) {
     });
 };
 
-
+/**
+ * Authenticates user
+ * @function authenticateBasic
+ * @param  {} auth
+ */
 userSchema.statics.authenticateBasic = function(auth) {
   let query = { username: auth.username };
   return this.findOne(query)
@@ -87,14 +104,21 @@ userSchema.statics.authenticateBasic = function(auth) {
     });
 };
 
-
+/**
+ * compares users password
+ * @param {} password
+ */
 userSchema.methods.comparePassword = function(password) {
   return bcrypt
     .compare(password, this.password)
     .then(valid => (valid ? this : null));
 };
 
-
+/**
+ * @function authenticateToken
+ * @param {} token
+ * @returns promise
+ */
 userSchema.statics.authenticateToken = function(token) {
   try {
     if (persistTokens.has(token)) {
@@ -113,7 +137,10 @@ userSchema.statics.authenticateToken = function(token) {
   }
 };
 
-
+/**
+ * @function generateToken
+ * @returns token, secret, and experation time
+ */
 userSchema.methods.generateToken = function() {
   let token = {
     id: this._id,

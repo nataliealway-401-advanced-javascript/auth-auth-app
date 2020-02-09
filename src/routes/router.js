@@ -9,7 +9,9 @@ const oauth = require('../auth/oauth/github.js');
 const bearerAuth = require('../auth/middleware/bearerAuth.js');
 
 router.get('/users', (req, res, next) => {
-  User.find({}).then(data => {
+  User.find({
+    
+  }).then(data => {
     const output = {
       count: data.length,
       results: data,

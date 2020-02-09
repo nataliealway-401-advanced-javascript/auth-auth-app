@@ -1,5 +1,7 @@
 # LAB - Authentication/Authorization
 
+## Labs 11-14
+
 
 ### Author: Natalie Alway
 
@@ -15,6 +17,13 @@
 ### Setup
 #### `.env` requirements
 * `PORT` - 3000
+* `MONGODB_URI` - URL for running MongoDB
+* `CLIENT_ID` - OAuth ID
+* `CLIENT_SECRET` - OAuth Secret
+* `API_SERVER` - http://localhost:3000/oauth
+* `TOKEN_SERVER` - https://github.com/login/oauth/access_token
+* `REMOTE_API` - https://api.github.com/user
+
 
 #### Running the app
 * `npm start`

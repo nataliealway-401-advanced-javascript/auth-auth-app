@@ -3,22 +3,19 @@
 const {server} = require('../../src/server.js');
 const supergoose = require('@code-fellows/supergoose');
 const mockRequest = supergoose(server);
-const jwt = require('jsonwebtoken');
-const User = require('../../src/model/userModel.js')
+const User = require('../../src/model/userModel.js');
 
-
-const user = new User();
+process.env.SECRET='secretSecretsAreNoFun';
 
 const users = {
-  a: { username: 'david', password: 'gumball' },
-  b: { username: 'miso', password: 'soup' },
-  c: { username: 'cheesesteak', password: 'sandwich' },
+  a: { username: 'Natalie', password: 'Alway' },
+  b: { username: 'John', password: 'Doe' },
   baduser: {username: 'badatsigningup'},
 };
 
 
 describe('Auth server routes testing', ()=>{
-  it('should post a new user', (done)=> {
+  it('should signup a new user', (done) => {
     mockRequest.post('/signup')
       .send(users.a)
       .then(res => {
@@ -27,7 +24,7 @@ describe('Auth server routes testing', ()=>{
       });
   });
 
-  it('should fail to post a new user', done => {
+  it('should fail at signing up a new user', (done) => {
     mockRequest
       .post('/signup')
       .send(users.baduser)
@@ -38,42 +35,55 @@ describe('Auth server routes testing', ()=>{
   });
 
   
-
-  it('should return a list of users', (done)=>{
+  it('should get all users', (done) => {
     mockRequest.get('/users')
       .then(res => {
-        
-        expect(res.body.results[0].username)
-          .toBe('david');
+        expect(res.body.results[0].username).toBe('Natalie');
         done();
       });
   });
 
-  it('should successfully sign in', done => {
-    
+  it('should sign in a user', (done) => {
     mockRequest.post('/signin')
       .auth(users.a.username, users.a.password)
-      .then(res => {
-        expect(res)
-          .not.toBe('Invalid User');
-        done();
-      });
-  });
-
-  it('should unsuccessfully sign in with an incorrect password', done => {
-    mockRequest
-      .post('/signin')
-      .auth(users.a.username, 'not the password')
       .then(res => {
         expect(res).not.toBe('Invalid User');
         done();
       });
   });
 
-  it('should return 404 when a non-existent route is hit',(done)=>{
+  it('should not allow you to sign in with an incorrect password', (done) => {
+    mockRequest
+      .post('/signin')
+      .auth(users.a.username, 'Incorrect login information')
+      .then(res => {
+        expect(res).not.toBe('Invalid User');
+        done();
+      });
+  });
+
+  it('should return 404 when a route that doesnt exist is hit' ,(done) => {
     mockRequest
       .get('/bad')
       .then(res => expect(res.status).toBe(404));
     done();
   });
 });
+
+// TOKEN TESTING _________________________
+
+describe('Token testing', () => {
+  let token;
+
+  const userObj = {
+    username: 'Natalie',
+    password: 'secretSecretsAreNoFun',
+  };
+
+  it('should generate a token', () => {
+    token = new User().generateToken(userObj);
+    expect(token).toBeDefined();
+  });
+});
+
+
