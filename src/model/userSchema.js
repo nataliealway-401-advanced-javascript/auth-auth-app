@@ -4,7 +4,7 @@ const mongoose = require('mongoose');
 const bcrypt = require('bcryptjs');
 /**
  * Schema for a user record
- * @type {mongoose.Schema}
+ * @type mongoose.Schema
  */
 const userSchema = new mongoose.Schema({
   username: { type: String, required: true, trim: true },
@@ -13,7 +13,7 @@ const userSchema = new mongoose.Schema({
 
 
 /**
- * userSchema.pre -> Hash the password before saving it to the database
+ * userSchema.pre: Hashes the password before saving it to the database
  * @param  {} 'save'
  */
 userSchema.pre('save', function(next) {

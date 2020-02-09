@@ -1,11 +1,14 @@
 # LAB - Authentication/Authorization
 
+## Labs 11-14
+
 
 ### Author: Natalie Alway
 
 ### Links and Resources
-* [submission PR](https://github.com/nataliealway-401-advanced-javascript/auth-auth-app/pull/1)
+* [submission PR](https://github.com/nataliealway-401-advanced-javascript/auth-auth-app/pull/4)
 * [travis](https://www.travis-ci.com/nataliealway-401-advanced-javascript/auth-auth-app)
+* [backend](https://auth-auth-app.herokuapp.com/)
 
 
 #### Documentation
@@ -15,6 +18,13 @@
 ### Setup
 #### `.env` requirements
 * `PORT` - 3000
+* `MONGODB_URI` - URL for running MongoDB
+* `CLIENT_ID` - OAuth ID
+* `CLIENT_SECRET` - OAuth Secret
+* `API_SERVER` - http://localhost:3000/oauth
+* `TOKEN_SERVER` - https://github.com/login/oauth/access_token
+* `REMOTE_API` - https://api.github.com/user
+
 
 #### Running the app
 * `npm start`

@@ -1,64 +1,89 @@
 'use strict';
 
 const {server} = require('../../src/server.js');
-// const User = require('../../src/model/userModel.js');
 const supergoose = require('@code-fellows/supergoose');
 const mockRequest = supergoose(server);
-const jwt = require('jsonwebtoken');
+const User = require('../../src/model/userModel.js');
+
+process.env.SECRET='secretSecretsAreNoFun';
+
+const users = {
+  a: { username: 'Natalie', password: 'Alway' },
+  b: { username: 'John', password: 'Doe' },
+  baduser: {username: 'badatsigningup'},
+};
 
 
-
-describe('Route Testing', () => {
-
-  let userObj = {
-    username: 'NatalieIsAwesome',
-    password: 'ForTestingPurposes',
-  };
-
-  let tokenID;
-
-  it('/signup route creates new user', () => {
-    return mockRequest.post('/signup')
-      .send(userObj)
-      .then(data => {
-        let token = jwt.verify(data.text, 'secretsSecretsAreNoFun');
-        tokenID = token.iat;
-        expect(token).toBeDefined();
+describe('Auth server routes testing', ()=>{
+  it('should signup a new user', (done) => {
+    mockRequest.post('/signup')
+      .send(users.a)
+      .then(res => {
+        expect(res.status).toBe(200);
+        done();
       });
   });
 
-  it('/signin authenticates user', () => {
-    return mockRequest.post('/signin')
-      .auth(userObj.username, userObj.password)
-      .then(results => {
-        let token = jwt.verify(results.text, 'secretsSecretsAreNoFun');
-        expect(token.iat).toEqual(tokenID);
-        
+  it('should fail at signing up a new user', (done) => {
+    mockRequest
+      .post('/signup')
+      .send(users.baduser)
+      .then(res => {
+        expect(res.status).toBe(500);
+        done();
       });
   });
 
-  it('throws an error with a invalid object', () => {
-    return mockRequest.post('/signup')
-      .send({name: 'incorrect', password: 5})
-      .then(data => {
-        expect(data.text).toEqual('Error Creating User');
+  
+  it('should get all users', (done) => {
+    mockRequest.get('/users')
+      .then(res => {
+        expect(res.body.results[0].username).toBe('Natalie');
+        done();
       });
   });
 
-
-  it('/users route returns all users', () => {
-    return mockRequest.get('/users')
-      .then(data => {
-        expect(data.body.count).toEqual(1);
+  it('should sign in a user', (done) => {
+    mockRequest.post('/signin')
+      .auth(users.a.username, users.a.password)
+      .then(res => {
+        expect(res).not.toBe('Invalid User');
+        done();
       });
   });
 
-
-  it('Returns invalid loging with invalid headers', () => {
-    return mockRequest.post('/signin')
-      .auth(userObj)
-      .then(results => {
-        expect(results.status).toEqual(500);
+  it('should not allow you to sign in with an incorrect password', (done) => {
+    mockRequest
+      .post('/signin')
+      .auth(users.a.username, 'Incorrect login information')
+      .then(res => {
+        expect(res).not.toBe('Invalid User');
+        done();
       });
+  });
+
+  it('should return 404 when a route that doesnt exist is hit' ,(done) => {
+    mockRequest
+      .get('/bad')
+      .then(res => expect(res.status).toBe(404));
+    done();
   });
 });
+
+// TOKEN TESTING _________________________
+
+describe('Token testing', () => {
+  let token;
+
+  const userObj = {
+    username: 'Natalie',
+    password: 'secretSecretsAreNoFun',
+  };
+
+  it('should generate a token', () => {
+    token = new User().generateToken(userObj);
+    expect(token).toBeDefined();
+  });
+});
+
+
